@@ -860,6 +860,272 @@ body {
 }
 
 /* =============================================
+   DIAGRAM 5: COMPOSABLE & EXTENSIBLE
+   ============================================= */
+
+/* Outer layout: two-column — left panels + right flow */
+.diagram-container:has(.comp-panels) {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.comp-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 220px;
+  flex-shrink: 0;
+}
+
+.comp-panel {
+  border-radius: var(--radius);
+  border: 1px solid var(--border2);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.comp-panel:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.35); }
+
+.comp-panel-partner {
+  background: linear-gradient(135deg, rgba(0,112,210,0.08) 0%, rgba(124,58,237,0.08) 100%);
+  border-color: rgba(0,112,210,0.25);
+}
+.comp-panel-partner:hover { border-color: var(--blue); }
+
+.comp-panel-merchant {
+  background: linear-gradient(135deg, rgba(22,163,74,0.08) 0%, rgba(13,148,136,0.08) 100%);
+  border-color: rgba(22,163,74,0.25);
+}
+.comp-panel-merchant:hover { border-color: var(--green); }
+
+.comp-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.comp-panel-icon { font-size: 16px; }
+
+.comp-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.comp-list li {
+  font-size: 11px;
+  color: var(--text2);
+  line-height: 1.5;
+  padding-left: 14px;
+  position: relative;
+}
+.comp-list li::before {
+  content: '›';
+  position: absolute;
+  left: 0;
+  color: var(--blue-lt);
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+/* Flow diagram right side */
+.comp-flow {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 8px;
+}
+
+.comp-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Actor (person icon + label) */
+.comp-actor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 64px;
+}
+.comp-actor:hover .comp-actor-icon { transform: scale(1.15); }
+.comp-actor-icon { font-size: 32px; transition: transform 0.2s; }
+.comp-actor-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text2);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+/* Boxes */
+.comp-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border2);
+  background: var(--glass2);
+  cursor: pointer;
+  transition: all 0.25s;
+  min-width: 120px;
+  text-align: center;
+}
+.comp-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.4);
+}
+
+.comp-box-lambda {
+  background: rgba(234,88,12,0.1);
+  border-color: rgba(234,88,12,0.3);
+}
+.comp-box-lambda:hover { border-color: var(--orange); box-shadow: 0 8px 28px rgba(234,88,12,0.25); }
+.comp-box-lambda .comp-box-icon {
+  width: 28px; height: 28px;
+  background: var(--orange);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+}
+
+.comp-box-github {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 18px;
+}
+.comp-box-gh-icon { color: var(--text2); flex-shrink: 0; }
+.comp-box-green {
+  background: rgba(22,163,74,0.1);
+  border-color: rgba(22,163,74,0.35);
+}
+.comp-box-green:hover { border-color: var(--green-lt); box-shadow: 0 8px 28px rgba(22,163,74,0.25); }
+.comp-box-green .comp-box-gh-icon { color: var(--green-lt); }
+
+.comp-box-dark {
+  background: rgba(51,65,85,0.3);
+  border-color: rgba(100,116,139,0.4);
+}
+.comp-box-dark:hover { border-color: #94a3b8; }
+.comp-box-dark .comp-box-gh-icon { color: #94a3b8; }
+
+.comp-box-bm {
+  background: rgba(0,112,210,0.1);
+  border-color: rgba(0,112,210,0.3);
+  min-width: 140px;
+}
+.comp-box-bm:hover { border-color: var(--blue); box-shadow: 0 8px 28px var(--blue-glow); }
+
+.comp-box-appex {
+  background: rgba(0,112,210,0.06);
+  border-color: rgba(0,112,210,0.2);
+  flex-direction: row;
+  gap: 8px;
+  min-width: 140px;
+}
+.comp-box-appex:hover { border-color: var(--blue-lt); }
+.comp-box-sf-icon { flex-shrink: 0; }
+
+.comp-box-partner-apps {
+  background: rgba(245,158,11,0.1);
+  border-color: rgba(245,158,11,0.3);
+  flex-direction: row;
+  gap: 8px;
+  min-width: 140px;
+}
+.comp-box-partner-apps:hover { border-color: #f59e0b; box-shadow: 0 8px 28px rgba(245,158,11,0.2); }
+.comp-box-partner-apps .comp-box-gh-icon { color: #f59e0b; }
+
+.comp-box-label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+/* Row-specific layout helpers */
+.comp-arrows-h {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: var(--blue-lt);
+  font-size: 13px;
+  opacity: 0.7;
+}
+.comp-label-edge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text3);
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+.comp-col-mid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.comp-push-install {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.comp-pi-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text3);
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+}
+
+.comp-discover-label,
+.comp-develop-label,
+.comp-publish-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.comp-publish-target {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--blue-lt);
+  opacity: 0.6;
+  letter-spacing: 0.04em;
+}
+
+/* Section divider between rows */
+.comp-row-1 { padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.comp-row-2 { padding: 8px 0; border-bottom: 1px solid var(--border); }
+.comp-row-3 { padding-top: 8px; }
+
+/* =============================================
    MODAL
    ============================================= */
 .modal-overlay {

@@ -377,6 +377,68 @@ const NODE_DATA = {
     title: 'Token Refresh',
     body: 'Before the access token expires, the SDK silently calls the SLAS token endpoint with the refresh token to get a new access token. The shopper stays logged in across sessions without re-authentication.',
     links: []
+  },
+
+  // Composable diagram
+  'comp-partner': {
+    badge: 'Partner',
+    title: 'Partner — Build & Publish',
+    body: 'Partners build extensions as completely separate packages — no forking the core storefront. They can extend or replace specific UI targets, replace entire routes with custom implementations, inject custom data providers, and optionally use AI-assisted merging to integrate their code deep into a merchant\'s storefront.',
+    links: []
+  },
+  'comp-merchant': {
+    badge: 'Merchant',
+    title: 'Merchant — Install & Deploy',
+    body: 'Merchants discover and install apps directly from Business Manager or AppExchange. Installation is seamless — no manual code merges needed. Apps deploy via GitHub CI/CD to Managed Runtime automatically, making updates and rollbacks straightforward.',
+    links: []
+  },
+  'comp-shoppers': {
+    badge: 'End User',
+    title: 'Shoppers',
+    body: 'The end customers who benefit from the composable architecture without knowing it exists. Partner apps deliver custom experiences — loyalty widgets, custom recommendation carousels, alternative checkout flows — all running inside the Storefront Next SSR layer.',
+    links: []
+  },
+  'comp-mrt': {
+    badge: 'Runtime',
+    title: 'Managed Runtime (MRT)',
+    body: 'Managed Runtime hosts the deployed storefront. When a merchant installs an app, the app\'s cartridge code merges into the merchant\'s Customer Repo, then a GitHub Actions workflow triggers a new MRT deployment automatically. Zero downtime deploys via blue/green Lambda versioning.',
+    links: []
+  },
+  'comp-customer-repo': {
+    badge: 'GitHub',
+    title: 'Customer Repo',
+    body: 'The merchant\'s own GitHub repository forked from the Storefront Next template. This is what gets deployed to MRT. Partner apps are installed here — either as Git submodules, npm packages, or via AI-assisted code injection. The CI/CD pipeline in this repo drives all MRT deployments.',
+    links: []
+  },
+  'comp-bm': {
+    badge: 'Platform',
+    title: 'Business Manager',
+    body: 'Salesforce B2C Commerce\'s admin UI. Merchants discover installable apps here, manage app configurations, and trigger deployments — all without leaving Business Manager. The install flow calls the SCAPI Admin APIs to push app code to the Customer Repo.',
+    links: []
+  },
+  'comp-appex': {
+    badge: 'Marketplace',
+    title: 'App Exchange',
+    body: 'Salesforce AppExchange is the marketplace where partners list their B2C Commerce apps. Merchants browse, review, and select apps to install. AppExchange handles licensing, reviews, and version management for the partner ecosystem.',
+    links: []
+  },
+  'comp-commerce-apps': {
+    badge: 'Registry',
+    title: 'Commerce Apps',
+    body: 'The central registry of published Commerce Apps — a GitHub-based repository that acts as the canonical source for app packages. When a partner publishes an app, it appears here. When a merchant installs, the platform pulls the app bundle from this registry into the Customer Repo.',
+    links: []
+  },
+  'comp-devs': {
+    badge: 'Builder',
+    title: 'Developers / Partners',
+    body: 'ISV partners and system integrators who build Commerce Apps. They develop against the Storefront Next extension APIs, test against a sandbox, and publish to the Commerce Apps registry via the partner portal. Apps can be free, paid, or private (partner-only).',
+    links: []
+  },
+  'comp-partner-apps': {
+    badge: 'App Package',
+    title: 'Partner Apps',
+    body: 'A Partner App is a self-contained extension package: cartridge code (B2C backend logic), React components (frontend UI extensions), metadata XML (site preferences, custom attributes), and an app manifest. Published to the Commerce Apps registry and versioned semantically.',
+    links: []
   }
 };
 
@@ -441,7 +503,7 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
 });
 
 // Update active tab on scroll
-const sections = ['diagram-highlevel', 'diagram-mrt', 'diagram-dataflow', 'diagram-auth'];
+const sections = ['diagram-highlevel', 'diagram-mrt', 'diagram-dataflow', 'diagram-auth', 'diagram-composable'];
 const observer = new IntersectionObserver(entries => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
