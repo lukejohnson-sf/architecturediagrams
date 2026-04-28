@@ -634,3 +634,112 @@ document.addEventListener('mousemove', e => {
   glow.style.left = e.clientX + 'px';
   glow.style.top  = e.clientY + 'px';
 });
+
+// ============================================================
+// ANIMATED FAVICON — scrolling "storefrontnext" text on canvas
+// ============================================================
+(function () {
+  const SIZE = 64;
+  const fc = document.createElement('canvas');
+  fc.width = SIZE;
+  fc.height = SIZE;
+  const fx = fc.getContext('2d');
+
+  // Create / reuse the <link rel="icon"> element
+  let faviconLink = document.querySelector('link[rel="icon"]');
+  if (!faviconLink) {
+    faviconLink = document.createElement('link');
+    faviconLink.rel = 'icon';
+    document.head.appendChild(faviconLink);
+  }
+
+  const TEXT       = 'storefrontnext · ';
+  const FONT_SIZE  = 11;
+  const SCROLL_SPD = 0.7;   // px per frame
+  const BG_COLOR   = '#070d1a';
+  const TRACK_COL  = 'rgba(255,255,255,0.07)';
+  const TEXT_COL   = '#1e90ff';
+  const GLOW_COL   = 'rgba(30,144,255,0.55)';
+  const DOT_COL    = '#7c3aed';
+
+  // Measure text width so we can tile it seamlessly
+  fx.font = `bold ${FONT_SIZE}px "Space Mono", monospace`;
+  const textW = fx.measureText(TEXT).width;
+
+  let offset = 0;
+  let frame  = 0;
+
+  function drawFavicon() {
+    offset = (offset + SCROLL_SPD) % textW;
+    frame++;
+
+    // Background
+    fx.clearRect(0, 0, SIZE, SIZE);
+    fx.fillStyle = BG_COLOR;
+    fx.fillRect(0, 0, SIZE, SIZE);
+
+    // Rounded clip mask
+    fx.save();
+    fx.beginPath();
+    fx.roundRect(0, 0, SIZE, SIZE, 10);
+    fx.clip();
+
+    // Subtle horizontal scan-line track
+    fx.fillStyle = TRACK_COL;
+    fx.fillRect(0, SIZE / 2 - 9, SIZE, 18);
+
+    // Scrolling text — tile it twice so it wraps seamlessly
+    fx.font = `bold ${FONT_SIZE}px "Space Mono", monospace`;
+    fx.textBaseline = 'middle';
+
+    // Glow pass
+    fx.shadowColor  = GLOW_COL;
+    fx.shadowBlur   = 6;
+    fx.fillStyle    = GLOW_COL;
+    for (let i = -1; i <= 2; i++) {
+      fx.fillText(TEXT, i * textW - offset, SIZE / 2);
+    }
+
+    // Crisp text pass
+    fx.shadowBlur = 0;
+    fx.fillStyle  = TEXT_COL;
+    for (let i = -1; i <= 2; i++) {
+      fx.fillText(TEXT, i * textW - offset, SIZE / 2);
+    }
+
+    // Animated dot in top-right — pulses like a live indicator
+    const dotAlpha = 0.5 + 0.5 * Math.sin(frame * 0.08);
+    fx.shadowColor = DOT_COL;
+    fx.shadowBlur  = 6 * dotAlpha;
+    fx.fillStyle   = `rgba(124,58,237,${dotAlpha})`;
+    fx.beginPath();
+    fx.arc(SIZE - 8, 8, 4, 0, Math.PI * 2);
+    fx.fill();
+    fx.shadowBlur = 0;
+
+    // Left/right fade vignette so text fades at edges
+    const vL = fx.createLinearGradient(0, 0, 12, 0);
+    vL.addColorStop(0, BG_COLOR);
+    vL.addColorStop(1, 'transparent');
+    fx.fillStyle = vL;
+    fx.fillRect(0, 0, 12, SIZE);
+
+    const vR = fx.createLinearGradient(SIZE - 12, 0, SIZE, 0);
+    vR.addColorStop(0, 'transparent');
+    vR.addColorStop(1, BG_COLOR);
+    fx.fillStyle = vR;
+    fx.fillRect(SIZE - 12, 0, 12, SIZE);
+
+    fx.restore();
+
+    // Push to favicon — throttle to every 3rd frame to stay light
+    if (frame % 3 === 0) {
+      faviconLink.href = fc.toDataURL('image/png');
+    }
+
+    requestAnimationFrame(drawFavicon);
+  }
+
+  // Wait for Space Mono font to be ready before starting
+  document.fonts.ready.then(drawFavicon);
+})();
