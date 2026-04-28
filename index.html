@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Storefront Next Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Background canvas for particles -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- Navigation -->
+<nav class="nav" id="nav">
+  <div class="nav-logo">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="13" stroke="#0070d2" stroke-width="1.5"/><path d="M8 14h12M14 8v12" stroke="#0070d2" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <span>SF Architecture</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-target="diagram-highlevel">High-Level</button>
+    <button class="nav-tab" data-target="diagram-mrt">MRT Deep Dive</button>
+    <button class="nav-tab" data-target="diagram-dataflow">Data Flow</button>
+    <button class="nav-tab" data-target="diagram-auth">Auth Flow</button>
+  </div>
+  <div class="nav-badge">
+    <span class="live-dot"></span>
+    <span>B2C Commerce</span>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <div class="hero-eyebrow">Salesforce B2C Commerce</div>
+  <h1 class="hero-title">
+    <span class="hero-line-1">Storefront Next</span>
+    <span class="hero-line-2">Architecture</span>
+  </h1>
+  <p class="hero-sub">Explore the complete technical blueprint of the next-generation commerce storefront — from edge CDN to core data systems.</p>
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-val">4</span><span class="stat-label">Diagrams</span></div>
+    <div class="stat-div"></div>
+    <div class="stat"><span class="stat-val">12+</span><span class="stat-label">Components</span></div>
+    <div class="stat-div"></div>
+    <div class="stat"><span class="stat-val">3</span><span class="stat-label">Layers</span></div>
+  </div>
+  <button class="hero-cta" onclick="document.getElementById('diagram-highlevel').scrollIntoView({behavior:'smooth'})">
+    Explore Diagrams
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="hero-scroll-hint">scroll to explore</div>
+</section>
+
+<!-- ============================================================
+     DIAGRAM 1: HIGH-LEVEL ARCHITECTURE
+     ============================================================ -->
+<section class="diagram-section" id="diagram-highlevel">
+  <div class="section-header">
+    <div class="section-number">01</div>
+    <div>
+      <h2 class="section-title">Storefront Next High-Level Architecture</h2>
+      <p class="section-desc">End-to-end view from shopper request to core commerce systems</p>
+    </div>
+  </div>
+
+  <div class="diagram-container" id="hl-diagram">
+
+    <!-- SHOPPER -->
+    <div class="node node-shopper" data-id="shopper" style="left:2%;top:38%">
+      <div class="node-icon">🛒</div>
+      <div class="node-label">Shopper</div>
+    </div>
+
+    <!-- eCDN -->
+    <div class="node node-cdn" data-id="ecdn" style="left:10%;top:35%">
+      <div class="node-inner">
+        <div class="node-chip">eCDN</div>
+        <div class="node-sublabel">Cloudflare</div>
+      </div>
+    </div>
+
+    <!-- MRT LAYER -->
+    <div class="layer layer-mrt" style="left:20%;top:5%;width:55%;height:52%">
+      <div class="layer-label-top">Managed Runtime (MRT)</div>
+
+      <!-- SSR Region -->
+      <div class="layer layer-ssr" style="left:3%;top:14%;width:91%;height:82%">
+        <div class="layer-label-top">SSR Region</div>
+
+        <!-- Cloudfront box -->
+        <div class="layer layer-cf" style="left:2%;top:13%;width:28%;height:76%">
+          <div class="layer-label-top">Cloudfront</div>
+          <div class="node node-sm" data-id="waf" style="position:relative;margin:8px auto 4px;left:auto;top:auto">WAF</div>
+          <div class="node node-sm" data-id="lambda-edge" style="position:relative;margin:4px auto;left:auto;top:auto">Lambda@Edge</div>
+        </div>
+
+        <!-- Middle column -->
+        <div style="position:absolute;left:33%;top:13%;width:22%;height:76%;display:flex;flex-direction:column;justify-content:center;gap:8px;">
+          <div class="node node-sm" data-id="api-gateway" style="position:relative;left:auto;top:auto">API Gateway</div>
+          <div class="node node-sm" data-id="s3" style="position:relative;left:auto;top:auto">S3 Static Assets</div>
+        </div>
+
+        <!-- AWS Lambda box -->
+        <div class="layer layer-lambda" style="left:58%;top:5%;width:39%;height:90%">
+          <div class="layer-label-top">AWS Lambda</div>
+          <div class="node node-sm node-template" data-id="sfn-template" style="position:relative;margin:6px auto 6px;left:auto;top:auto;width:80%">Storefront Next Template</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:0 4px;">
+            <div class="node node-xs" data-id="react19">React 19</div>
+            <div class="node node-xs" data-id="router7">React Router 7</div>
+            <div class="node node-xs" data-id="shadcn">ShadCN/UI</div>
+            <div class="node node-xs" data-id="tailwind">TailwindCSS</div>
+            <div class="node node-xs" data-id="pagedesigner-fe">Page Designer</div>
+            <div class="node node-xs" data-id="sdk">SDK</div>
+          </div>
+        </div>
+
+      </div><!-- /SSR Region -->
+    </div><!-- /MRT -->
+
+    <!-- KV Store -->
+    <div class="node node-kv" data-id="kv-store" style="left:76%;top:12%">
+      <div class="node-icon-sm">🗄</div>
+      <div class="node-label">KV Store</div>
+    </div>
+
+    <!-- SCAPI Zone -->
+    <div class="node node-scapi-zone" data-id="scapi-zone" style="left:34%;top:60%">
+      <div class="node-inner">
+        <div class="node-chip node-chip-blue">SCAPI Zone</div>
+        <div class="node-sublabel">Cloudflare</div>
+      </div>
+    </div>
+
+    <!-- ECOM LAYER -->
+    <div class="layer layer-ecom" style="left:10%;top:72%;width:68%;height:26%">
+      <div class="layer-label-top">ECom</div>
+
+      <!-- JWA sub-layer -->
+      <div class="layer layer-jwa" style="left:2%;top:12%;width:44%;height:82%">
+        <div class="layer-label-top">JWA</div>
+
+        <!-- Cartridge -->
+        <div class="layer layer-cartridge" style="left:2%;top:15%;width:58%;height:77%">
+          <div class="layer-label-top">Cartridge</div>
+          <div class="node node-xs" data-id="custom-apis" style="position:relative;margin:4px auto 2px;left:auto;top:auto">Custom APIs</div>
+          <div class="node node-xs" data-id="hooks" style="position:relative;margin:2px auto;left:auto;top:auto">Hooks</div>
+          <div class="node node-xs" data-id="scapi-cartridge" style="position:relative;margin:2px auto;left:auto;top:auto">SCAPI</div>
+          <div class="node node-xs" data-id="pd-cartridge" style="position:relative;margin:2px auto;left:auto;top:auto">Page Designer</div>
+        </div>
+
+        <!-- P13N node -->
+        <div class="node node-xs node-p13n" data-id="p13n" style="left:64%;top:60%;width:30%">Promotions, Campaigns, P13N</div>
+      </div>
+
+      <!-- Database sub-layer -->
+      <div class="layer layer-db" style="left:48%;top:12%;width:50%;height:82%">
+        <div class="layer-label-top">Database</div>
+        <div class="node node-xs" data-id="content-assets" style="position:relative;margin:3px auto 2px;left:auto;top:auto">Content Assets</div>
+        <div class="node node-xs" data-id="metadata" style="position:relative;margin:2px auto;left:auto;top:auto">Metadata</div>
+        <div class="node node-xs" data-id="settings" style="position:relative;margin:2px auto;left:auto;top:auto">Settings</div>
+        <div class="node node-xs" data-id="dc-segments" style="position:relative;margin:2px auto;left:auto;top:auto">Datacloud Segments</div>
+        <div class="node node-xs" data-id="einstein-segments" style="position:relative;margin:2px auto;left:auto;top:auto">Einstein Segments</div>
+      </div>
+
+    </div><!-- /ECom -->
+
+    <!-- CORE LAYER -->
+    <div class="layer layer-core" style="left:80%;top:55%;width:18%;height:43%">
+      <div class="layer-label-top">Core</div>
+      <div class="node node-xs" data-id="data-cloud" style="position:relative;margin:6px auto 4px;left:auto;top:auto">Data Cloud</div>
+      <div class="node node-xs" data-id="einstein" style="position:relative;margin:4px auto;left:auto;top:auto">Einstein (CQuotient)</div>
+    </div>
+
+    <!-- SVG arrows overlay -->
+    <svg class="arrows-svg" id="hl-arrows" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible">
+      <!-- Will be drawn by JS -->
+    </svg>
+
+  </div><!-- /diagram-container -->
+
+  <div class="diagram-legend">
+    <div class="legend-item"><span class="legend-dot" style="background:#7c3aed"></span>Managed Runtime</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#16a34a"></span>ECom Layer</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#0070d2"></span>Core Services</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#0ea5e9"></span>SCAPI Zone</div>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     DIAGRAM 2: MRT DEEP DIVE
+     ============================================================ -->
+<section class="diagram-section" id="diagram-mrt">
+  <div class="section-header">
+    <div class="section-number">02</div>
+    <div>
+      <h2 class="section-title">Managed Runtime Deep Dive</h2>
+      <p class="section-desc">Inside the SSR layer — edge processing, Lambda execution, and static delivery</p>
+    </div>
+  </div>
+
+  <div class="diagram-container" id="mrt-diagram">
+
+    <div class="flow-row" style="margin-top:40px">
+
+      <div class="flow-card flow-card-blue" data-id="user-request">
+        <div class="flow-card-icon">👤</div>
+        <div class="flow-card-title">User Request</div>
+        <div class="flow-card-desc">HTTPS request from browser</div>
+      </div>
+
+      <div class="flow-arrow-h">→</div>
+
+      <div class="flow-card flow-card-orange" data-id="ecdn-2">
+        <div class="flow-card-icon">☁️</div>
+        <div class="flow-card-title">eCDN / Cloudflare</div>
+        <div class="flow-card-desc">Edge CDN, DDoS protection, global PoPs</div>
+      </div>
+
+      <div class="flow-arrow-h">→</div>
+
+      <div class="flow-group">
+        <div class="flow-group-label">Cloudfront</div>
+        <div class="flow-card flow-card-purple" data-id="waf-2">
+          <div class="flow-card-title">WAF</div>
+          <div class="flow-card-desc">Web Application Firewall</div>
+        </div>
+        <div class="flow-card flow-card-purple" data-id="lambda-edge-2">
+          <div class="flow-card-title">Lambda@Edge</div>
+          <div class="flow-card-desc">Edge compute, request routing</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="flow-split-label">↓ Dynamic &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ↓ Static</div>
+
+    <div class="flow-row" style="margin-top:16px;align-items:flex-start">
+
+      <div class="flow-group" style="flex:2">
+        <div class="flow-group-label">AWS Lambda (SSR)</div>
+        <div class="flow-card flow-card-purple flow-card-wide" data-id="sfn-2">
+          <div class="flow-card-title">Storefront Next Template</div>
+          <div class="flow-tags">
+            <span class="flow-tag" data-id="react-tag">React 19</span>
+            <span class="flow-tag" data-id="router-tag">React Router 7</span>
+            <span class="flow-tag" data-id="shadcn-tag">ShadCN/UI</span>
+            <span class="flow-tag" data-id="tailwind-tag">TailwindCSS</span>
+            <span class="flow-tag" data-id="pd-tag">Page Designer</span>
+            <span class="flow-tag" data-id="sdk-tag">SDK</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-arrow-h" style="margin-top:60px">↕</div>
+
+      <div class="flow-card flow-card-teal" data-id="kv-2" style="flex:1">
+        <div class="flow-card-icon">🗄</div>
+        <div class="flow-card-title">KV Store</div>
+        <div class="flow-card-desc">Edge key-value store for personalization data</div>
+      </div>
+
+      <div class="flow-arrow-h" style="margin-top:60px">→</div>
+
+      <div class="flow-card flow-card-gray" data-id="s3-2" style="flex:1">
+        <div class="flow-card-icon">📦</div>
+        <div class="flow-card-title">S3 Static Assets</div>
+        <div class="flow-card-desc">JS bundles, images, fonts</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="diagram-legend">
+    <div class="legend-item"><span class="legend-dot" style="background:#7c3aed"></span>MRT / Lambda</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#0ea5e9"></span>CDN Layer</div>
+    <div class="legend-item"><span class="legend-dot" style="background:#0d9488"></span>Storage</div>
+  </div>
+</section>
+
+<!-- ============================================================
+     DIAGRAM 3: DATA FLOW
+     ============================================================ -->
+<section class="diagram-section" id="diagram-dataflow">
+  <div class="section-header">
+    <div class="section-number">03</div>
+    <div>
+      <h2 class="section-title">Commerce Data Flow</h2>
+      <p class="section-desc">How product, content, and shopper data moves through the system</p>
+    </div>
+  </div>
+
+  <div class="diagram-container">
+    <div class="dataflow-grid">
+
+      <div class="df-lane df-lane-shopper">
+        <div class="df-lane-header">Shopper Layer</div>
+        <div class="df-node" data-id="df-browser">Browser / PWA</div>
+        <div class="df-arrow">↓</div>
+        <div class="df-node" data-id="df-cdn">eCDN Edge</div>
+      </div>
+
+      <div class="df-lane-arrow">→</div>
+
+      <div class="df-lane df-lane-mrt">
+        <div class="df-lane-header">MRT / Lambda</div>
+        <div class="df-node" data-id="df-ssr">SSR Render</div>
+        <div class="df-arrow">↕</div>
+        <div class="df-node" data-id="df-sdk">Commerce SDK</div>
+        <div class="df-arrow">↕</div>
+        <div class="df-node" data-id="df-kvread">KV Store Read</div>
+      </div>
+
+      <div class="df-lane-arrow">→</div>
+
+      <div class="df-lane df-lane-scapi">
+        <div class="df-lane-header">SCAPI Zone</div>
+        <div class="df-node" data-id="df-scapi">SCAPI APIs</div>
+        <div class="df-arrow">↓</div>
+        <div class="df-node" data-id="df-custom">Custom APIs</div>
+        <div class="df-arrow">↓</div>
+        <div class="df-node" data-id="df-hooks">Hooks</div>
+      </div>
+
+      <div class="df-lane-arrow">→</div>
+
+      <div class="df-lane df-lane-ecom">
+        <div class="df-lane-header">ECom / B2C</div>
+        <div class="df-node" data-id="df-catalog">Catalog / Products</div>
+        <div class="df-arrow">↕</div>
+        <div class="df-node" data-id="df-promotions">Promotions & P13N</div>
+        <div class="df-arrow">↕</div>
+        <div class="df-node" data-id="df-content">Content Assets</div>
+      </div>
+
+      <div class="df-lane-arrow">→</div>
+
+      <div class="df-lane df-lane-core">
+        <div class="df-lane-header">Core Services</div>
+        <div class="df-node" data-id="df-datacloud">Data Cloud</div>
+        <div class="df-arrow">↕</div>
+        <div class="df-node" data-id="df-einstein2">Einstein AI</div>
+        <div class="df-arrow">↕</div>
+        <div class="df-node" data-id="df-segments">Segments</div>
+      </div>
+
+    </div>
+
+    <!-- Data annotations -->
+    <div class="df-annotations">
+      <div class="df-annotation df-ann-1">
+        <span class="df-ann-badge">SSR</span>
+        Server-side renders HTML on every request using Lambda
+      </div>
+      <div class="df-annotation df-ann-2">
+        <span class="df-ann-badge">Personalization</span>
+        KV Store syncs shopper segments from Data Cloud in real-time
+      </div>
+      <div class="df-annotation df-ann-3">
+        <span class="df-ann-badge">P13N</span>
+        Einstein CQuotient powers product recommendations
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     DIAGRAM 4: AUTH FLOW
+     ============================================================ -->
+<section class="diagram-section" id="diagram-auth">
+  <div class="section-header">
+    <div class="section-number">04</div>
+    <div>
+      <h2 class="section-title">SLAS Authentication Flow</h2>
+      <p class="section-desc">Shopper login and API access service token lifecycle</p>
+    </div>
+  </div>
+
+  <div class="diagram-container">
+    <div class="auth-flow">
+
+      <div class="auth-actor" data-id="auth-browser">
+        <div class="auth-actor-icon">🌐</div>
+        <div class="auth-actor-label">Browser</div>
+      </div>
+
+      <div class="auth-sequence">
+        <div class="auth-step auth-step-1" data-id="auth-1">
+          <div class="auth-step-num">1</div>
+          <div class="auth-step-body">
+            <div class="auth-step-title">Guest Token Request</div>
+            <div class="auth-step-desc">Browser requests guest PKCE token from SLAS</div>
+            <div class="auth-step-arrow">→ SLAS Public Client</div>
+          </div>
+        </div>
+        <div class="auth-step auth-step-2" data-id="auth-2">
+          <div class="auth-step-num">2</div>
+          <div class="auth-step-body">
+            <div class="auth-step-title">Access Token Issued</div>
+            <div class="auth-step-desc">JWT access + refresh tokens returned, stored in httpOnly cookie</div>
+            <div class="auth-step-arrow">← Access Token (JWT)</div>
+          </div>
+        </div>
+        <div class="auth-step auth-step-3" data-id="auth-3">
+          <div class="auth-step-num">3</div>
+          <div class="auth-step-body">
+            <div class="auth-step-title">API Calls via SDK</div>
+            <div class="auth-step-desc">Commerce SDK attaches bearer token to all SCAPI requests</div>
+            <div class="auth-step-arrow">→ SCAPI Zone</div>
+          </div>
+        </div>
+        <div class="auth-step auth-step-4" data-id="auth-4">
+          <div class="auth-step-num">4</div>
+          <div class="auth-step-body">
+            <div class="auth-step-title">Login (Registered Shopper)</div>
+            <div class="auth-step-desc">PKCE authorization code flow — shopper logs in, code exchanged for tokens</div>
+            <div class="auth-step-arrow">↔ SLAS / IdP</div>
+          </div>
+        </div>
+        <div class="auth-step auth-step-5" data-id="auth-5">
+          <div class="auth-step-num">5</div>
+          <div class="auth-step-body">
+            <div class="auth-step-title">Token Refresh</div>
+            <div class="auth-step-desc">Refresh token silently rotates access token before expiry</div>
+            <div class="auth-step-arrow">→ SLAS Token Endpoint</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-actor" data-id="auth-slas">
+        <div class="auth-actor-icon">🔐</div>
+        <div class="auth-actor-label">SLAS</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <button class="modal-close" id="modal-close">×</button>
+    <div class="modal-badge" id="modal-badge"></div>
+    <h3 class="modal-title" id="modal-title"></h3>
+    <p class="modal-body" id="modal-body"></p>
+    <div class="modal-links" id="modal-links"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
